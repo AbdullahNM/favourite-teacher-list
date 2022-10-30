@@ -14,7 +14,7 @@ learnerRoutes.get("/getAll", LearnerCtrl.GetAll);
 //Get by ID Method
 learnerRoutes.get("/getOne/:id", );
 
-//Add/Register new student
+//Add/Register new student give student details in body
 learnerRoutes.post("/add", LearnerCtrl.Add);
 
 //Login ... Generate jwt Token
