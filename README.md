@@ -144,7 +144,7 @@ _Below is an example of how you can instruct your audience on installing and set
    npm install
    ```
    3. Connect to MogoDB Database and get your Database URL
-   For help refer : [https://www.mongodb.com/docs/guides/atlas/connection-string/](Connection  String)
+   For help refer : [https://www.mongodb.com/docs/guides/atlas/connection-string](Connection  String)
 3. Enter your DATABASE_URL and JWT_SECRET_KEY in `.env`
    ```js
    DATABASE_URL = 'Enter Your URL'
