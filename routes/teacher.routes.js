@@ -15,4 +15,5 @@ teacherRoutes.get("/getAll", TeacherCtrl.GetAll);
 //Get by ID Method
 teacherRoutes.get("/getOne/:id", TeacherCtrl.GetOne);
 
+//Get most liked teacher
 teacherRoutes.get("/getMostFav", TeacherCtrl.GetMostLiked);
