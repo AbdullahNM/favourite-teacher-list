@@ -177,7 +177,7 @@ class LearnerController {
     }
   }
 
-  static async Removefav(req, res, next) {
+  static async RemoveFav(req, res, next) {
     try {
       const result = await LearnerModel.findById(req.userdata.userId);
       console.log(result);
@@ -199,6 +199,11 @@ class LearnerController {
     } catch (error) {
       res.status(400).json({ message: error.message });
     }
+  }
+
+  static async LogOut(req, res, next) {
+    res.cookie("jwt", "", { maxAge: 1 });
+    res.status(200).json({ message: "Logged Out" });
   }
 }
 

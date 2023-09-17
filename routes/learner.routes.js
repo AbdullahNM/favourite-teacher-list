@@ -26,7 +26,9 @@ learnerRoutes.patch('/addfavourite',Auth,LearnerCtrl.AddFav)
 
 
 //Remove teacher from favourite list
-learnerRoutes.patch('/removefavourite',Auth,LearnerCtrl.Removefav)
+learnerRoutes.patch('/removefavourite',Auth,LearnerCtrl.RemoveFav)
 
 learnerRoutes.post('/refresh',LearnerCtrl.Refresh)
+
+learnerRoutes.post('/logout',LearnerCtrl.LogOut)
 
