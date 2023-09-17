@@ -12,6 +12,7 @@ const Auth = (req, res,next) => {
         next();
     } catch (error) {
       // Access Denied
+      console.log(error.message);
       return res.status(401).json({message: error.message});
     }
   };

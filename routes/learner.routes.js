@@ -12,7 +12,7 @@ module.exports = learnerRoutes;
 learnerRoutes.get("/getAll", LearnerCtrl.GetAll);
 
 //Get by ID Method
-learnerRoutes.get("/getOne/:id", );
+learnerRoutes.get("/getOne/:id",LearnerCtrl.GetOne );
 
 //Add/Register new student give student details in body
 learnerRoutes.post("/add", LearnerCtrl.Add);
@@ -27,4 +27,6 @@ learnerRoutes.patch('/addfavourite',Auth,LearnerCtrl.AddFav)
 
 //Remove teacher from favourite list
 learnerRoutes.patch('/removefavourite',Auth,LearnerCtrl.Removefav)
+
+learnerRoutes.post('/refresh',LearnerCtrl.Refresh)
 

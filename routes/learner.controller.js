@@ -4,6 +4,39 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
 class LearnerController {
+  static async Refresh(req, res, next) {
+    if (req.cookies?.jwt) {
+      // Destructuring refreshToken from cookie
+      const refreshToken = req.cookies.jwt;
+
+      // Verifying refresh token
+      jwt.verify(
+        refreshToken,
+        process.env.REFRESH_TOKEN_SECRET,
+        (err, decoded) => {
+          if (err) {
+            // Wrong Refesh Token
+            return res.status(406).json({ message: "Unauthorized" });
+          } else {
+            // Correct token we send a new access token
+            const accessToken = jwt.sign(
+              {
+                username: userCredentials.username,
+                email: userCredentials.email,
+              },
+              process.env.ACCESS_TOKEN_SECRET,
+              {
+                expiresIn: "10m",
+              }
+            );
+            return res.json({ accessToken });
+          }
+        }
+      );
+    } else {
+      return res.status(406).json({ message: "Unauthorized" });
+    }
+  }
   static async Add(req, res, next) {
     LearnerModel.find({ email: req.body.email })
       .exec()
@@ -73,19 +106,32 @@ class LearnerController {
             });
           }
           if (result) {
-            const token = jwt.sign(
+            const access_token = jwt.sign(
               {
                 email: user[0].email,
                 userId: user[0]._id,
               },
               process.env.JWT_SECRET_KEY,
               {
-                expiresIn: "2h",
+                expiresIn: "3h",
               }
             );
+            const refresh_token = jwt.sign(
+              { userId: user[0]._id },
+              process.env.REFRESH_TOKEN_SECRET,
+              { expiresIn: "7d" }
+            );
+            res.cookie("jwt", refresh_token, {
+              httpOnly: true,
+              sameSite: "None",
+              secure: true,
+              maxAge: 24 * 60 * 60 * 1000,
+            });
             return res.status(200).json({
+              email: user[0].email,
+              id: user[0]._id,
               message: "Auth successful",
-              token: token,
+              token: access_token,
             });
           }
           res.status(401).json({
@@ -116,17 +162,15 @@ class LearnerController {
       console.log(result);
 
       const teacher = await TeacherModel.findOne({ name: req.body.new });
-      if(teacher)
-      {
-      teacher.count++;
-      teacher.save();
-      if (req.body.new) result.favourite.push(req.body.new);
+      if (teacher) {
+        teacher.count++;
+        teacher.save();
+        if (req.body.new) result.favourite.push(req.body.new);
 
-      result.save();
-      res.status(200).json({ result: result, teacher: teacher });
-      }
-      else{
-        res.send('Bad Request')
+        result.save();
+        res.status(200).json({ result: result, teacher: teacher });
+      } else {
+        res.send("Bad Request");
       }
     } catch (error) {
       res.status(400).json({ message: error.message });
@@ -137,20 +181,20 @@ class LearnerController {
     try {
       const result = await LearnerModel.findById(req.userdata.userId);
       console.log(result);
-      const teacher = await TeacherModel.findOne({ name: req.body.new }).catch((err)=>{
-        res.status(201).json({message: err.message})
-      });
-      if(teacher && teacher.count>=1)
-      {
-      teacher.count--;
-      teacher.save();
-      if (req.body.new) result.favourite.pull(req.body.new);
+      const teacher = await TeacherModel.findOne({ name: req.body.new }).catch(
+        (err) => {
+          res.status(201).json({ message: err.message });
+        }
+      );
+      if (teacher && teacher.count >= 1) {
+        teacher.count--;
+        teacher.save();
+        if (req.body.new) result.favourite.pull(req.body.new);
 
-      result.save();
-      res.status(200).json({ result: result, teacher: teacher });
-      }
-      else{
-        res.send('Bad Request')
+        result.save();
+        res.status(200).json({ result: result, teacher: teacher });
+      } else {
+        res.send("Bad Request");
       }
     } catch (error) {
       res.status(400).json({ message: error.message });
